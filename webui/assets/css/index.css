@@ -1,0 +1,319 @@
+:root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-color: #8b5cf6;
+    --accent-hover: #7c3aed;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --sidebar-width: 280px;
+    --transition: all 0.3s ease;
+    --radius: 16px;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--bg-tertiary);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.sidebar-top {
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-top h3 {
+    color: var(--accent-color);
+    font-size: 1.25rem;
+    margin: 0;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar h2,
+.sidebar h4 {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    padding: 24px 24px 12px;
+    margin: 0;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 12px 24px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: var(--transition);
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.sidebar a:hover {
+    background-color: var(--bg-tertiary);
+    border-left-color: var(--accent-color);
+}
+
+.sidebar a i {
+    margin-right: 12px;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+}
+
+.sidebar a:hover i {
+    color: var(--accent-color);
+}
+
+.sidebar-end {
+    margin-top: auto;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-end a {
+    padding: 8px 0;
+    justify-content: center;
+    border: none;
+    opacity: 0.7;
+}
+
+.sidebar-end a:hover {
+    background: transparent;
+    opacity: 1;
+}
+
+/* Main Content */
+.content {
+    margin-left: var(--sidebar-width);
+    padding: 40px;
+    max-width: 1600px;
+}
+
+/* Connection Overlay */
+#waitingforconnection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: var(--bg-primary);
+    z-index: 2000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+}
+
+/* Flex Layout for Top Section (User Info, Quest, Actions) */
+.big-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.small-box {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--bg-tertiary);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+h2.text-container {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    font-weight: 700;
+}
+
+.info-card-data,
+.quest-card-data {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-card-data:last-child,
+.quest-card-data:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.info-card-data span,
+.quest-card-data span {
+    color: var(--text-primary);
+    font-weight: 600;
+    text-align: right;
+}
+
+/* Status colors */
+#bot-status,
+#ws-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    background: var(--bg-tertiary);
+}
+
+/* Buttons */
+.action-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.btn {
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+}
+
+.btn-success {
+    background-color: var(--success);
+}
+
+.btn-success:hover {
+    background-color: #059669;
+}
+
+.btn-info {
+    background-color: #3b82f6;
+}
+
+/* Blue for Pause */
+.btn-info:hover {
+    background-color: #2563eb;
+}
+
+.btn-warning {
+    background-color: var(--warning);
+}
+
+.btn-warning:hover {
+    background-color: #d97706;
+}
+
+.btn-danger {
+    background-color: var(--danger);
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-box {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--bg-tertiary);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px;
+}
+
+.stat-box:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.stat-box .value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-color), #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    /* Fixed lint error */
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+    margin-bottom: 8px;
+}
+
+.stat-box .label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Specific Stat Box Overrides if needed */
+.stat-box.override,
+.stat-box.highlight {
+    grid-column: span 2;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        overflow: hidden;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 20px;
+        width: 100%;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stat-box.override,
+    .stat-box.highlight {
+        grid-column: span 1;
+    }
+}

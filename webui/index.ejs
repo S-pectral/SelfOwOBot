@@ -1,0 +1,50 @@
+<!-- 
+  OwO Farm Bot Stable
+  Copyright (C) 2024 Mido
+  This software is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+  For more information, see README.md and LICENSE -->
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>💖 OwO Farm Bot Stable 💖</title>
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+            rel="stylesheet"
+        />
+        <link href="./assets/css/index.css" rel="stylesheet" />
+        <link href="./assets/css/popup.css" rel="stylesheet" />
+        <link href="./assets/css/notification.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="notification-container" id="notification-container"></div>
+        <div class="content" id="waitingforconnection" style="display: block">
+            <%- include('partials/sidebar/waitingconnection.ejs') %>
+        </div>
+        <div class="content" id="connected" style="display: none">
+            <%-include('partials/sidebar/main.ejs') %>
+            <%-include('partials/home/main.ejs') %>
+            <%-include('partials/home/extra.ejs') %>
+            <%-include('partials/settings/general.ejs') %>
+            <%-include('partials/settings/main.ejs') %>
+            <%-include('partials/settings/extra.ejs') %>
+            <%-include('partials/webuisettings.ejs', { images: images, videos: videos }) %>
+            <%-include('partials/rebootalert.ejs') %>
+            <%-include('partials/log.ejs') %>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="./assets/js/index.js"></script>
+        <script src="./assets/js/savesettings.js"></script>
+        <script src="./assets/js/webuisettings.js"></script>
+        <script src="./assets/js/ws.js"></script>
+    </body>
+</html>

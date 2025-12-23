@@ -1,0 +1,125 @@
+{
+    "main": {
+        "token": "YOUR_TOKEN_HERE",
+        "userId": "YOUR_USER_ID",
+        "channelId": [
+            "YOUR_CHANNEL_ID"
+        ],
+        "adminId": "YOUR_ADMIN_ID",
+        "prefix": ".",
+        "autoHunt": true,
+        "autoBattle": true,
+        "autoPray": [
+            "curse"
+        ],
+        "autoGamble": {
+            "coinflip": false,
+            "slots": true,
+            "blackjack": false,
+            "coinflipAmount": 1,
+            "slotsAmount": 30000,
+            "minGambleBalance": 40000
+        },
+        "autoGem": 1,
+        "gemTier": [
+            "common",
+            "uncommon",
+            "rare",
+            "epic",
+            "mythical",
+            "legendary",
+            "fabled"
+        ],
+        "autoLootbox": true,
+        "autoFabledLootbox": false,
+        "autoDaily": true,
+        "autoSell": true,
+        "autoSellRarity": [
+            "common",
+            "uncommon"
+        ],
+        "autoSacrifice": false,
+        "autoSacrificeRarity": [
+            "common",
+            "uncommon"
+        ],
+        "autoLevel": true,
+        "autoQuote": false,
+        "autoCookie": false,
+        "autoClover": false,
+        "interactionTargetId": "YOUR_ADMIN_ID",
+        "autoQuest": true,
+        "autoHuntBot": true,
+        "autoTrait": "efficiency",
+        "useAdotfAPI": true,
+        "captchaAPI": "none",
+        "apiKey": "",
+        "webhookURL": "",
+        "notifications": [
+            "webhook"
+        ]
+    },
+    "extra": {
+        "token": "",
+        "userId": "",
+        "channelId": [
+            ""
+        ],
+        "adminId": "",
+        "prefix": "!",
+        "autoHunt": true,
+        "autoBattle": true,
+        "autoPray": [
+            "pray"
+        ],
+        "autoGamble": {
+            "coinflip": false,
+            "slots": true,
+            "blackjack": false,
+            "coinflipAmount": 1,
+            "slotsAmount": 30000,
+            "minGambleBalance": 0
+        },
+        "autoGem": 1,
+        "gemTier": [
+            "common",
+            "uncommon",
+            "rare",
+            "epic",
+            "mythical",
+            "legendary",
+            "fabled"
+        ],
+        "autoLootbox": true,
+        "autoFabledLootbox": false,
+        "autoDaily": true,
+        "autoSell": false,
+        "autoSellRarity": [
+            "common",
+            "uncommon"
+        ],
+        "autoSacrifice": false,
+        "autoSacrificeRarity": [
+            "common",
+            "uncommon"
+        ],
+        "autoLevel": false,
+        "autoQuote": false,
+        "autoCookie": false,
+        "autoClover": false,
+        "interactionTargetId": "",
+        "autoQuest": true,
+        "autoHuntBot": true,
+        "autoTeam": false,
+        "autoTrait": "efficiency",
+        "useAdotfAPI": true,
+        "captchaAPI": "none",
+        "apiKey": "",
+        "webhookURL": "",
+        "notifications": []
+    },
+    "settings": {
+        "expressPort": 1243,
+        "developerMode": false
+    }
+}
