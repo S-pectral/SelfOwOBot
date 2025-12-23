@@ -46,4 +46,4 @@ This is a **selfbot**. Using selfbots implies a risk of being banned by Discord.
 
 ## License
 
-[MIT](/Licanse.txt)
+[MIT](/Licanse)
