@@ -121,19 +121,14 @@ export class BotClient extends Client implements IBotClient {
     private async handleMessage(message: Message) {
         // 1. Check for Captcha from OwO Bot
         if (message.author.id === "408785106942164992") { // OwO Bot ID
-            const content = message.content.toLowerCase();
+            const rawContent = message.content.toLowerCase();
+            // Remove zero-width spaces, formatting marks, and extra whitespace to ensure clean match
+            const normalizedContent = rawContent.replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '').replace(/\s+/g, ' ');
+
             const isDM = message.channel.type === "DM";
 
-            // STRICT CHECK: The message MUST mention the bot to be a valid captcha for us.
-            // (Unless it's a DM, where mentions might not be explicit or it's implicitly for us)
-            // UPDATE: Strict mention check failed (Owo bot might bold name instead of ping). 
-            // Fallback to username/displayname check.
-
-            const guildMe = message.guild?.me;
-            const guildNick = guildMe?.displayName?.toLowerCase(); // Local server nickname
-            const globalName = this.user?.username.toLowerCase();
-            const displayName = this.user?.displayName.toLowerCase(); // Global display name
-
+            // STRICT CHECK: The user explicitly asked to ONLY stop if the warning is for THIS bot.
+            // Check mentions specifically.
             const isReplyToMe = message.reference?.messageId
                 ? (await message.channel.messages.fetch(message.reference.messageId).then(m => m.author.id === this.user?.id).catch(() => false))
                 : false;
@@ -142,56 +137,55 @@ export class BotClient extends Client implements IBotClient {
                 isDM ||
                 isReplyToMe ||
                 message.mentions.users.has(this.user?.id!) ||
-                (globalName && content.includes(globalName)) ||
-                (displayName && content.includes(displayName)) ||
-                (guildNick && content.includes(guildNick)) ||
-                content.includes(this.user?.id!);
+                rawContent.includes(this.user?.username.toLowerCase()!) ||
+                rawContent.includes(this.user?.displayName.toLowerCase()!) ||
+                rawContent.includes(this.user?.id!);
 
             if (!isForMe) return;
 
+            // Define captcha keywords based on normalized content
+            const captchaKeywords = [
+                "captcha",
+                "verify",
+                "human",
+                "banned",
+                "are you a real human",
+                "security checking",
+                "please complete this within 10 minutes",
+                "please use the link below"
+            ];
+
             const isCaptcha =
-                (content.includes("captcha") ||
-                    content.includes("verify") ||
-                    content.includes("human") ||
-                    content.includes("banned")) &&
-                !content.includes("verified that you are human") && // Ignore success message
-                !content.includes("thank you");
+                captchaKeywords.some(k => normalizedContent.includes(k)) &&
+                !normalizedContent.includes("verified that you are human") &&
+                !normalizedContent.includes("thank you");
 
             // Also check for DMs which are common for captchas
-            const suspiciousDM = isDM && (content.includes("link") || message.attachments.size > 0);
+            const suspiciousDM = isDM && (normalizedContent.includes("link") || message.attachments.size > 0);
 
             // Comprehensive Embed Check
-            const embedJson = message.embeds.length > 0 ? JSON.stringify(message.embeds[0]).toLowerCase() : "";
+            // Embeds might also have weird formatting, so normalize them too
+            const embedJson = message.embeds.length > 0 ? JSON.stringify(message.embeds[0]).toLowerCase().replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '') : "";
 
             const isEmbedCaptcha = (message.embeds.length > 0 && (
                 embedJson.includes("captcha") ||
-                embedJson.includes("verify that you are human")
+                embedJson.includes("verify that you are human") ||
+                embedJson.includes("are you a real human")
             ));
 
-            // DEBUG: Trace why captcha logic triggers or doesn't
-            if (content.includes("captcha") || content.includes("verify")) {
-                logger.debug(`[Captcha Check] Triggered: ${content.substring(0, 50)}... | ForMe: ${isForMe} (DM:${isDM}, Reply:${isReplyToMe}, Nick:${guildNick}) | IsCaptcha: ${isCaptcha} | IsEmbed: ${isEmbedCaptcha}`);
-            }
-
-            // Log OwO messages for debugging if they contain suspicious keywords but weren't caught
-            if ((content.includes("captcha") || content.includes("verify")) && !isCaptcha && !isEmbedCaptcha) {
-                logger.warn(`[DEBUG] Potential uncaught captcha: ${content} | Embeds: ${embedJson}`);
-            }
-
-            if (isCaptcha || isEmbedCaptcha || (isDM && suspiciousDM) || /are you a real human|(check|verify) that you are.{1,3}human!/img.test(content)) {
+            if (isCaptcha || isEmbedCaptcha || (isDM && suspiciousDM)) {
                 this.captchaDetected = true;
                 this.paused = true;
                 this.total.captcha++;
                 logger.error("🚨 CAPTCHA DETECTED! Bot paused automatically.");
-                logger.warn(`Reason: ${content.substring(0, 100)}...`);
+                logger.warn(`Reason: ${normalizedContent.substring(0, 100)}...`);
 
                 // Notify Admin via DM
                 if (this.config.adminId) {
                     this.users.fetch(this.config.adminId).then(admin => {
-                        admin.send(`🚨 **CAPTCHA DETECTED!** 🚨\n**Bot Account:** ${this.user?.tag}\n**Reason:** ${content.substring(0, 100)}...`)
-                            .then(() => logger.info(`[Notify] Sent DM to admin (${this.config.adminId})`))
+                        admin.send(`🚨 **CAPTCHA DETECTED!** 🚨\n**Bot Account:** ${this.user?.tag}\n**Reason:** ${normalizedContent.substring(0, 100)}...`)
                             .catch(err => logger.error(`[Notify] Failed to DM admin: ${err.message}`));
-                    }).catch(err => logger.error(`[Notify] Failed to fetch admin user: ${err.message}`));
+                    }).catch(() => { });
                 }
 
                 // Attempt to solve if configured
