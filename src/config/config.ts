@@ -12,6 +12,8 @@ export interface BotConfig {
     autoHunt: boolean;
     autoBattle: boolean;
     autoPray: string[]; // ['pray', 'curse']
+    prayCurseTarget: "self" | "other";
+    prayCurseTargetId: string;
     autoGamble: {
         coinflip: boolean;
         slots: boolean;

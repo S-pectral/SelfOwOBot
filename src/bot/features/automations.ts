@@ -37,16 +37,23 @@ async function useGems(client: IBotClient, channel: any, huntMsgContent: string)
 
     // Fetch Inventory
     await channel.send("owo inv");
+    const normalizedName = client.user?.username.replace(/[\W_]+/g, "").toLowerCase();
+
     const invMsg = await new Promise<Message | null>(resolve => {
         const c = channel.createMessageCollector({
-            filter: (m: Message) => m.author.id === "408785106942164992" && m.content.includes("Inventory"),
+            filter: (m: Message) => {
+                return m.author.id === "408785106942164992" && m.content.includes("Inventory");
+            },
             time: 12000, max: 1
         });
         c.on('collect', (m: Message) => resolve(m));
         c.on('end', (col: any) => resolve(col.first() || null));
     });
 
-    if (!invMsg) return;
+    if (!invMsg) {
+        logger.warn(`[${client.user?.username}] AutoGem: Failed to find inventory message (Timeout or Filter Mismatch). Name used: ${normalizedName}`);
+        return;
+    }
 
     const inventory = invMsg.content.split("`");
 
@@ -89,9 +96,9 @@ async function useGems(client: IBotClient, channel: any, huntMsgContent: string)
 
     if (gemsToUse.length > 0) {
         await channel.send(`owo use ${gemsToUse.join(" ")}`);
-        logger.info(`AutoGem: Used gems ${gemsToUse.join(" ")}`);
+        logger.info(`[${client.user?.username}] AutoGem: Used gems ${gemsToUse.join(" ")}`);
     } else {
-        logger.warn("AutoGem: Gems needed but none found in inventory.");
+        logger.warn(`[${client.user?.username}] AutoGem: Gems needed but none found in inventory/config.`);
     }
 }
 
@@ -115,6 +122,7 @@ export const AutoHunt = {
                 collector.on('collect', async (m: Message) => {
                     client.total.hunt++;
                     logger.info("Sent: owoh");
+                    import('../../api/stats.js').then(s => s.incrementStat('totalHunt'));
                     await useGems(client, channel, m.content);
                 });
             } catch (e) {
@@ -135,6 +143,7 @@ export const AutoBattle = {
             await channel.send("owob");
             client.total.battle++;
             logger.info("Sent: owob");
+            import('../../api/stats.js').then(s => s.incrementStat('totalBattle'));
         }
     }
 };
@@ -148,9 +157,15 @@ export const AutoPray = {
         const channel = await client.channels.fetch(client.config.channelId[0]);
         if (channel && channel.isText()) {
             const cmd = client.config.autoPray[0] || "pray";
-            await channel.send(`owo ${cmd}`);
+            let content = `owo ${cmd}`;
+
+            if (client.config.prayCurseTarget === "other" && client.config.prayCurseTargetId) {
+                content += ` ${client.config.prayCurseTargetId}`;
+            }
+
+            await channel.send(content);
             client.total.pray++;
-            logger.info(`Sent: owo ${cmd}`);
+            logger.info(`[${client.user?.username}] Sent: ${content}`);
         }
     }
 };

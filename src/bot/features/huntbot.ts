@@ -10,16 +10,19 @@ interface HuntBotState {
     processing: boolean;
 }
 
-const state: HuntBotState = {
-    nextRun: 0,
-    processing: false
+const states = new Map<string, HuntBotState>();
+
+const getState = (clientId: string): HuntBotState => {
+    if (!states.has(clientId)) {
+        states.set(clientId, { nextRun: 0, processing: false });
+    }
+    return states.get(clientId)!;
 };
 
 const MIRAI_ID = "1205422490969579530";
 
 async function solveWithMirai(client: IBotClient, channel: any, imageUrl: string): Promise<string | null> {
     try {
-        // Ensure Mirai is authorized (if method exists)
         if (typeof client.authorizedApplications === 'function' && typeof client.installUserApps === 'function') {
             const apps = await client.authorizedApplications();
             if (!apps.some((a: any) => a.application.id === MIRAI_ID)) {
@@ -28,38 +31,20 @@ async function solveWithMirai(client: IBotClient, channel: any, imageUrl: string
             }
         }
 
-        // Send Slash Command: /solve huntbot [url]
-        // Note: The second arg in reference was [undefined, url] but sendSlash usually takes name, then args.
-        // Reference: command: "solve huntbot", args: [undefined, attachmentUrl]
-        // This implies proper sub-command handling: solve -> huntbot -> url?
-        // Or "solve huntbot" is the name?
-        // Let's assume `channel.sendSlash(MIRAI_ID, "solve huntbot", imageUrl)` based on common usage.
-        // Reference uses `channel.sendSlash(bot, command, ...args)`.
-
-        // Wait for response logic
-        // We need to capture the initial loading message and its update.
-
         const slashMsg = await channel.sendSlash(MIRAI_ID, "solve huntbot", imageUrl);
 
         if (!slashMsg) return null;
-
-        // Wait for update (Mirai edits the message with result)
-        // Simple polling/wait mechanism since we can't easily do complex event listeners here without clutter.
-        // Or use a temporary collector/listener.
 
         return new Promise((resolve) => {
             const timeout = setTimeout(() => resolve(null), 20000);
 
             const listener = async (oldM: Message, newM: Message) => {
                 if (newM.id === slashMsg.id) {
-                    // Check if loading is done
                     if (newM.content && !newM.content.includes("Thinking")) {
                         clearTimeout(timeout);
                         client.off("messageUpdate", listener as any);
 
-                        // Parse result
                         try {
-                            // Content is JSON: { "time": 123, "result": "CODE", "avgConfidence": "99%" }
                             const json = JSON.parse(newM.content);
                             if (json && json.result) {
                                 resolve(json.result);
@@ -88,6 +73,12 @@ export const AutoHuntBot = {
     cooldown: () => Helper.random(60000, 120000),
     run: async (client: IBotClient) => {
         if (client.paused || client.captchaDetected) return;
+
+        const clientId = client.user?.id;
+        if (!clientId) return;
+
+        const state = getState(clientId);
+
         if (state.processing || Date.now() < state.nextRun) return;
 
         const channel = await client.channels.fetch(client.config.channelId[0]);
@@ -130,6 +121,22 @@ export const AutoHuntBot = {
             // 2. Parse response
             const content = collected.content;
             const embeds = collected.embeds;
+
+            // Check for Auto Upgrade ( Essence )
+            if (client.config.autoTrait && embeds.length > 0) {
+                const desc = embeds[0].description || "";
+                // Description usually contains "You have X Essence"
+                const essenceMatch = desc.match(/You have\s+\*\*(\d+)\*\*\s*<:essence:\d+>/i);
+                if (essenceMatch) {
+                    const points = parseInt(essenceMatch[1]);
+                    if (points > 0) {
+                        const trait = client.config.autoTrait;
+                        await channel.send(`owohb upgrade ${trait} all`);
+                        logger.info(`[${client.user?.username}] Upgraded HuntBot trait: ${trait}`);
+                        await Helper.sleep(2000);
+                    }
+                }
+            }
 
             // Scenario A: Already hunting
             let isHunting = false;

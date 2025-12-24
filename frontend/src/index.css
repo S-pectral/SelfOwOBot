@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 @layer base {
+
+  html,
   body {
-    @apply bg-background text-white antialiased;
+    @apply bg-background text-white antialiased h-full overflow-hidden;
   }
 }

@@ -99,11 +99,11 @@ export class BotClient extends Client implements IBotClient {
                 logger.error(`Failed to upload activity image: ${err}`);
             }
 
-            this.user?.setActivity("Gambling in OwO ", {
+            this.user?.setActivity("Gambling in OwO", {
                 type: "PLAYING",
-                // @ts-ignore
+                details: "Made by Spectral.",
                 assets: largeImage ? { large_image: largeImage, large_text: "OwO" } : undefined
-            });
+            } as any);
             logger.info("Status set to: Gambling in OwO");
 
             // Start main loop handler

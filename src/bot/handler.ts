@@ -46,7 +46,7 @@ export class LoopHandler {
                 try {
                     await feature.run(this.client);
                 } catch (error: any) {
-                    logger.error(`Error in feature ${feature.name}: ${error.message}`);
+                    logger.error(`[${this.client.user?.username || 'Unknown'}] Error in feature ${feature.name}: ${error.message}`);
                 }
             }
 

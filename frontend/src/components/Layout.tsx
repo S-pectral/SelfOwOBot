@@ -10,7 +10,7 @@ export const Layout = () => {
             <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[120px] pointer-events-none" />
 
             <Sidebar />
-            <main className="flex-1 overflow-auto p-8 relative z-10">
+            <main className="flex-1 overflow-auto p-4 relative z-10">
                 <Outlet />
             </main>
         </div>

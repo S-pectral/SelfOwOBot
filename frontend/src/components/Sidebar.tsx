@@ -1,13 +1,12 @@
 
 import { NavLink } from 'react-router-dom';
-import { Home, Settings, Terminal, Bot } from 'lucide-react'; // Import icons
+import { Home, Settings, Bot } from 'lucide-react'; // Import icons
 import { cn } from '../lib/utils';
 
 export const Sidebar = () => {
     const links = [
         { to: '/', icon: Home, label: 'Dashboard' },
         { to: '/settings', icon: Settings, label: 'Settings' },
-        { to: '/logs', icon: Terminal, label: 'Logs' },
     ];
 
     return (

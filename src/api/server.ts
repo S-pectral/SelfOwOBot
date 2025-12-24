@@ -34,8 +34,14 @@ export class WebServer {
 
 
         this.app.get('/api/guilds', (req, res) => {
-            const client = this.wsServer.getClients()[0]; // Main client
-            if (!client || !client.isReadyFlag) {
+            const index = Number(req.query.index) || 0;
+            const client = this.wsServer.getClients()[index];
+
+            if (!client) {
+                return res.json([]); // Return empty if client doesn't exist
+            }
+
+            if (!client.isReadyFlag) {
                 return res.status(503).json({ message: 'Bot not ready' });
             }
 
@@ -56,33 +62,30 @@ export class WebServer {
             res.json(this.config);
         });
 
+        this.app.get('/api/stats', (req, res) => {
+            import('./stats.js').then(stats => {
+                res.json(stats.getStats());
+            });
+        });
+
         this.app.post('/save-settings', (req, res) => {
             try {
-                const newData = req.body;
+                const { main, extra, settings } = req.body;
 
-                // Helper to update nested
-                const updateConfig = (target: any, data: any) => {
-                    for (const key in data) {
-                        if (key.includes('-')) {
-                            // Handle nested like autoGamble-coinflip
-                            const parts = key.split('-');
-                            if (parts.length === 2 && target[parts[0]] && typeof target[parts[0]] === 'object') {
-                                target[parts[0]][parts[1]] = data[key];
-                            }
-                        } else {
-                            if (key in target) {
-                                target[key] = data[key];
-                            }
-                        }
-                    }
-                };
+                if (main) {
+                    Object.assign(this.config.main, main);
+                }
 
-                updateConfig(this.config.main, newData);
-                updateConfig(this.config.settings, newData);
+                if (extra) {
+                    Object.assign(this.config.extra, extra);
+                }
 
-                // Also handle special conversions if needed (e.g. string to number)
-                // config.autoGem is number
-                if (newData.autoGem !== undefined) this.config.main.autoGem = Number(newData.autoGem);
+                if (settings) {
+                    Object.assign(this.config.settings, settings);
+                }
+
+                // Type conversions if necessary (e.g. legacy flat post handling removal)
+                // Assuming frontend sends correct types now.
 
                 saveConfig(this.config);
                 res.json({ message: 'Settings saved successfully!', type: 'success' });
@@ -102,7 +105,7 @@ export class WebServer {
     private setupWebSocket() {
         this.server.on('upgrade', (request, socket, head) => {
             if (request.url === '/' || request.url === '/ws') {
-                this.wsServer.handleUpgrade(request, socket, head);
+                this.wsServer.handleUpgrade(request, socket as any, head);
             } else {
                 socket.destroy();
             }
