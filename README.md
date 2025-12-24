@@ -6,6 +6,11 @@
 
 **Made by [Spectral.](https://spectralportfolio.vercel.app/)**
 
+## ⚠️ Disclaimer
+
+**Using this software (Selfbot) is against Discord's Terms of Service.**
+This project is for educational purposes only. Use it at your own risk. The author (Spectral.) is not responsible for any account bans or suspensions that may occur. It is highly recommended to use this on alt accounts and avoid excessive automation speeds.
+
 ## ✨ Features
 
 ### 🎮 Automation
