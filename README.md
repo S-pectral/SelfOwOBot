@@ -51,7 +51,7 @@ This project is for educational purposes only. Use it at your own risk. The auth
     npm install
     cd frontend
     npm install
-    cd ..
+    cd SlefOwOBot
     ```
 
 3.  **Configure the bot:**
