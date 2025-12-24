@@ -42,7 +42,7 @@ This project is for educational purposes only. Use it at your own risk. The auth
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/selfowobot.git
+    git clone https://github.com/S-pectral/SelfOwOBot
     cd selfowobot
     ```
 
